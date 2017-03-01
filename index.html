@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-ng-app="todolist">
+<html ng-app="todolist">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,28 +8,86 @@
     <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.8/semantic.min.js"></script>
     <script src="./assets/js/todo.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.8/semantic.min.css">
+    <link rel="stylesheet" href="./assets/style/css.css">
     <title>TODO LIST</title>
   </head>
-  <body data-ng-controller="todo as vm">
+  <body ng-controller="todo as vm" data-ng-cloak data-ng-init="vm.init()">
     <div>
       <div class="ui piled segment container ">
-        <h4 class="ui header">TO DO LIST</h4>
+        <h4 class="ui header">TO DO LIST <a class="ui blue circular label">{{ vm.todo.length }}</a></h4>
+        <div class="ui middle aligned divided list fluid">
+          <div class="item" data-ng-repeat="todo in vm.todo  | filter : vm.sorts track by $index">
+            <div class="right floated content">
+              <button class="ui button yellow icon" data-ng-click="vm.editBtn(todo.id)">
+                <i class="edit icon"></i>
+              </button>
+              <button class="ui button red icon" data-ng-click="vm.remove(todo.id)">
+                <i class="trash icon"></i>
+              </button>
+            </div>
+            <div class="content">
+              <div class="ui checkbox">
+                <input type="checkbox" data-ng-model="ch" data-ng-click="vm.check($index,ch)" data-ng-true-value="true" data-ng-false-value="false" data-ng-checked="todo.status"/>
+                <label>
+                  <div class="header" data-ng-class="{ complete : todo.status == true , incomplete : todo.status == false}">
+                  {{ todo.list }}
+                  </div>
+                  {{ todo.description }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="ui middle aligned divided list fluid">
           <div class="item">
             <div class="content">
-              <form class="ui form" data-ng-submit="vm.submit(data)" >
+              <form class="ui form" data-ng-enter="vm.add(data)">
                 <div class="field">
-                  <input type="text" name="list" placeholder="List" data-ng-model="data.list"/>
+                  <div class="two fields">
+                    <div class="field">
+                      <input type="text" data-ng-model="data.list" placeholder="List"/>
+                    </div>
+                    <div class="field">
+                      <input type="text" data-ng-model="data.description" placeholder="Description"/>
+                    </div>
+                  </div>
                 </div>
-                <button type="submit">Add</button>
+
               </form>
             </div>
           </div>
           <div class="field">
-            <button name="ALL" class="ui button mini" >ALL</button>
-            <button name="COMPLETE" class="ui button green mini" >COMPLETE</button>
-            <button name="INCOMPLETE" class="ui button red mini" >INCOMPLETE</button>
+            <button data-ng-click="vm.sorts=''" class="ui button blue mini">ALL</button>
+            <button data-ng-click="vm.sorts=true" class="ui button green mini">COMPLETE</button>
+            <button data-ng-click="vm.sorts=false" class="ui button red mini">INCOMPLETE</button>
           </div>
+        </div>
+      </div>
+      <div class="ui form modal small">
+        <div class="header">
+          Edit
+        </div>
+        <div class="content">
+          <form data-ng-enter="vm.update(e)">
+            <div class="field">
+              <label>ID</label>
+              <input type="text" data-ng-value="e.id" readonly/>
+            </div>
+            <div class="field">
+              <label>List</label>
+              <input type="text" data-ng-model="e.list" data-ng-value="e.list"/>
+            </div>
+            <div class="field">
+              <label>Description</label>
+              <input type="text" data-ng-model="e.description" data-ng-value="e.description"/>
+            </div>
+            <div class="ui positive message" data-ng-show="vm.success">
+              <p>Update Successful.</p>
+            </div>
+          </form>
+        </div>
+        <div class="actions">
+          <button type="submit" class="ui button green icon" data-ng-click="vm.update(e)">Update</button>
         </div>
       </div>
     </div>

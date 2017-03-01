@@ -1,0 +1,9 @@
+body{
+  margin:20px;
+}
+.complete{
+  text-decoration: line-through;
+}
+.incomplete{
+  text-decoration: none;
+}
